@@ -24,9 +24,8 @@ jobs:
           key: ${{ runner.os }}-minikube
       - name: Run in minikube
         run: |
-          brew install minikube
-          brew install hyperkit
-          brew install docker
+          brew install minikube hyperkit docker
+          mkdir ~/.minikube/profiles
           minikube cache add alpine:latest
           minikube start --wait all
           eval $(minikube docker-env)
@@ -43,11 +42,4 @@ jobs:
           ./install-docker-for-mac.sh
           docker build . -t testing
           docker container run testing
-  dummy:
-    name: Dummy
-    runs-on: macos-latest
-    steps:
-      - name: Dummy
-        run: |
-          sleep 20
-          find "$(brew --cache)"
+
