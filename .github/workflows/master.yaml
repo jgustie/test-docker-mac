@@ -17,11 +17,15 @@ jobs:
             ~/.minikube/cache
             ~/.minikube/bin
             ~/.minikube/profiles
+            ~/Library/Caches/Homebrew/downloads/*--minikube*
+            ~/Library/Caches/Homebrew/downloads/*--kubernetes-cli*
+            ~/Library/Caches/Homebrew/downloads/*--hyperkit*
+            ~/Library/Caches/Homebrew/downloads/*--docker*
           key: ${{ runner.os }}-minikube
       - name: Run in minikube
         run: |
           brew install minikube hyperkit docker
-          find "$(brew --cache)"
+          mkdir -p ~/.minikube/profiles
           minikube cache add alpine:latest
           minikube start --wait all
           eval $(minikube docker-env)
