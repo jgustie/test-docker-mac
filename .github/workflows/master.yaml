@@ -37,3 +37,10 @@ jobs:
           ./install-docker-for-mac.sh
           docker build . -t testing
           docker container run testing
+  dummy:
+    name: Dummy
+    runs-on: macos-latest
+    steps:
+      - name: Dummy
+        run: |
+          brew --cache
