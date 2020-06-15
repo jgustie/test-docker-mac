@@ -16,5 +16,6 @@ jobs:
       - name: Run Docker stuff
         run: |
           eval $(minikube docker-env)
+          docker version
           docker build . -t testing
           docker container run testing
