@@ -13,9 +13,11 @@ jobs:
       - name: Install stuff
         run: |
           brew install minikube
+          minikube start --wait all
       - name: Run Docker stuff
         run: |
           minikube docker-env
+          eval $(minikube docker-env)
           docker version
           docker build . -t testing
           docker container run testing
