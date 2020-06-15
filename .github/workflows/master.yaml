@@ -22,6 +22,7 @@ jobs:
           brew install minikube
           brew install hyperkit
           brew install docker
+          minikube cache add alpine:latest
           minikube start --wait all
           eval $(minikube docker-env)
           docker build . -t testing
@@ -43,4 +44,5 @@ jobs:
     steps:
       - name: Dummy
         run: |
-          brew --cache
+          sleep 20
+          find "$(brew --cache)"
