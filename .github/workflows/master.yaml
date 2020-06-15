@@ -16,7 +16,7 @@ jobs:
           path: |
             ~/.minikube/cache
             ~/.minikube/bin
-            ~/.minikube/profile
+            ~/.minikube/profiles
             ~/Library/Caches/Homebrew/minikube*
             ~/Library/Caches/Homebrew/kubernetes-cli*
             ~/Library/Caches/Homebrew/hyperkit*
@@ -25,7 +25,7 @@ jobs:
       - name: Run in minikube
         run: |
           brew install minikube hyperkit docker
-          mkdir ~/.minikube/profiles
+          mkdir -p ~/.minikube/profiles
           minikube cache add alpine:latest
           minikube start --wait all
           eval $(minikube docker-env)
