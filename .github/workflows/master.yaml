@@ -4,22 +4,29 @@ on:
     branches:
       - master
 jobs:
-  testing:
-    name: Testing
+  minikube:
+    name: minikube
     runs-on: macos-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Install stuff
+      - name: Run in minikube
         run: |
           brew install minikube
           brew install hyperkit
           brew install docker
           minikube start --wait all
-      - name: Run Docker stuff
-        run: |
-          minikube docker-env
           eval $(minikube docker-env)
-          docker version
+          docker build . -t testing
+          docker container run testing
+  docker-for-mac:
+    name: Docker for Mac
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Run in Docker for Mac
+        run: |
+          ./install-docker-for-mac.sh
           docker build . -t testing
           docker container run testing
