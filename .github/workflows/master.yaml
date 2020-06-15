@@ -13,6 +13,7 @@ jobs:
       - name: Install stuff
         run: |
           brew install minikube
+          brew install hyperkit
           brew install docker
           minikube start --wait all
       - name: Run Docker stuff
