@@ -10,6 +10,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Cache minikube
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.minikube/cache
+            ~/.minikube/bin
+        key: ${{ runner.os }}-minikube
       - name: Run in minikube
         run: |
           brew install minikube
