@@ -16,6 +16,11 @@ jobs:
           path: |
             ~/.minikube/cache
             ~/.minikube/bin
+            ~/.minikube/profile
+            ~/Library/Caches/Homebrew/minikube*
+            ~/Library/Caches/Homebrew/kubernetes-cli*
+            ~/Library/Caches/Homebrew/hyperkit*
+            ~/Library/Caches/Homebrew/docker*
           key: ${{ runner.os }}-minikube
       - name: Run in minikube
         run: |
