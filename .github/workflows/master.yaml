@@ -1,0 +1,20 @@
+name: Master workflow
+on:
+  push:
+    branches:
+      - master
+jobs:
+  testing:
+    name: Testing
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install stuff
+        run: |
+          brew install minikube
+      - name: Run Docker stuff
+        run: |
+          eval $(minikube docker-env)
+          docker build . -t testing
+          docker container run testing
