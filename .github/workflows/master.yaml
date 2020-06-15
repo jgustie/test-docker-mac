@@ -21,7 +21,7 @@ jobs:
       - name: Run in minikube
         run: |
           brew install minikube hyperkit docker
-          find ~/Library/Cache/Homebrew
+          find "$(brew --cache)"
           minikube cache add alpine:latest
           minikube start --wait all
           eval $(minikube docker-env)
