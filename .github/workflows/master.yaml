@@ -15,7 +15,7 @@ jobs:
           brew install minikube
       - name: Run Docker stuff
         run: |
-          eval $(minikube docker-env)
+          minikube docker-env
           docker version
           docker build . -t testing
           docker container run testing
