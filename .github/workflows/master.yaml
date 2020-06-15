@@ -16,7 +16,7 @@ jobs:
           path: |
             ~/.minikube/cache
             ~/.minikube/bin
-        key: ${{ runner.os }}-minikube
+          key: ${{ runner.os }}-minikube
       - name: Run in minikube
         run: |
           brew install minikube
