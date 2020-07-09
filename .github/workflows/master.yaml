@@ -24,11 +24,13 @@ jobs:
           key: ${{ runner.os }}-minikube-${{ steps.install-minikube.outputs.cache-key }}
           restore-keys: |
             ${{ runner.os }}-minikube-
-      - name: Run in minikube
+      - name: Start minikube
         run: |
           minikube start --driver hyperkit --wait all
           minikube cache add alpine:latest
-          eval $(minikube docker-env)
+          minikube docker-env | sed '/^#/d;s/="\(.*\)"/::\1/g;s/export /::set-env name=/g'
+      - name: Run in minikube
+        run: |
           docker build . -t testing
           docker container run testing
   docker-for-mac:
@@ -37,9 +39,39 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Install Docker for Mac
+        run: |
+          brew cask install docker --no-quarantine
+          sudo cp /Applications/Docker.app/Contents/Library/LaunchServices/com.docker.vmnetd /Library/PrivilegedHelperTools
+          sudo cp /Applications/Docker.app/Contents/Resources/com.docker.vmnetd.plist /Library/LaunchDaemons/
+          sudo chmod 544 /Library/PrivilegedHelperTools/com.docker.vmnetd
+          sudo chmod 644 /Library/LaunchDaemons/com.docker.vmnetd.plist
+          sudo launchctl load /Library/LaunchDaemons/com.docker.vmnetd.plist
+      - name: Start Docker for Mac
+        run: |
+          /Applications/Docker.app/Contents/MacOS/Docker --unattended &>/dev/null &
+
+          retries=0
+          while ! docker info &>/dev/null ; do
+              sleep 5
+              retries=`expr ${retries} + 1`
+
+              if pgrep -xq -- "Docker"; then
+                  echo 'Docker still running'
+              else
+                  echo 'Docker not running, restart'
+                  /Applications/Docker.app/Contents/MacOS/Docker --unattended &>/dev/null &
+              fi
+
+              if [[ ${retries} -gt 30 ]]; then
+                  >&2 echo 'Failed to run Docker'
+                  exit 1
+              fi;
+
+              echo 'Waiting for Docker service to be in the running state'
+          done
       - name: Run in Docker for Mac
         run: |
-          ./install-docker-for-mac.sh
           docker build . -t testing
           docker container run testing
 
