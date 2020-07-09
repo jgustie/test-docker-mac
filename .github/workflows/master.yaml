@@ -10,25 +10,25 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Install minikube
+        id: install-minikube
+        run: |
+          brew install minikube hyperkit docker
+          echo "::set-output name=cache-key::$(minikube version | md5)"
+          minikube docker-env | sed '/^#/d;s/="\(.*\)"/::\1/g;s/export /::set-env name=/g'
       - name: Cache minikube
         uses: actions/cache@v2
         with:
           path: |
             ~/.minikube/cache
-            #~/.minikube/bin
-            #~/.minikube/profiles
-            #~/Library/Caches/Homebrew/downloads/*--minikube*
-            #~/Library/Caches/Homebrew/downloads/*--kubernetes-cli*
-            #~/Library/Caches/Homebrew/downloads/*--hyperkit*
-            #~/Library/Caches/Homebrew/downloads/*--docker*
-          key: minikube
+            ~/.minikube/bin
+          key: ${{ runner.os }}-minikube-${{ steps.install-minikube.outputs.cache-key }}
+          restore-keys: |
+            ${{ runner.os }}-minikube-
       - name: Run in minikube
         run: |
-          brew install minikube hyperkit docker
-          #mkdir -p ~/.minikube/profiles
-          #minikube cache add alpine:latest
-          minikube start --wait all
-          eval $(minikube docker-env)
+          minikube start --driver hyperkit --wait all
+          minikube cache add alpine:latest
           docker build . -t testing
           docker container run testing
   docker-for-mac:
