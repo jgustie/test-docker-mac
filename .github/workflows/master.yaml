@@ -15,7 +15,6 @@ jobs:
         run: |
           brew install minikube hyperkit docker
           echo "::set-output name=cache-key::$(minikube version | md5)"
-          minikube docker-env | sed '/^#/d;s/="\(.*\)"/::\1/g;s/export /::set-env name=/g'
       - name: Cache minikube
         uses: actions/cache@v2
         with:
@@ -29,6 +28,7 @@ jobs:
         run: |
           minikube start --driver hyperkit --wait all
           minikube cache add alpine:latest
+          eval $(minikube docker-env)
           docker build . -t testing
           docker container run testing
   docker-for-mac:
