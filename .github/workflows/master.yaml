@@ -14,7 +14,7 @@ jobs:
         id: install-minikube
         run: |
           brew install minikube hyperkit docker
-          echo "::set-output name=cache-key::$(minikube version | md5)"
+          echo "cache-key=$(minikube version | md5)" >> $GITHUB_ENV
       - name: Cache minikube
         uses: actions/cache@v2
         with:
@@ -26,9 +26,8 @@ jobs:
             ${{ runner.os }}-minikube-
       - name: Start minikube
         run: |
-          minikube start --driver hyperkit --wait all
-          minikube cache add alpine:latest
-          minikube docker-env | sed '/^#/d;s/="\(.*\)"/::\1/g;s/export /::set-env name=/g'
+          minikube start --vm-driver hyperkit --wait all
+          minikube docker-env | sed '/^#/d;s/="\(.*\)"/=\1/g;s/export //g' >> $GITHUB_ENV
       - name: Run in minikube
         run: |
           docker build . -t testing
